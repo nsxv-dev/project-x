@@ -1,7 +1,6 @@
-﻿using project_x.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using project_x.Data;
 using project_x.Models;
-using BCrypt.Net;
-
 namespace project_x.Services
 
 {
@@ -18,11 +17,10 @@ namespace project_x.Services
         {
             if (await _context.Users.AnyAsync(u => u.Username == username))
             {
-                throw new Exception("Username arleady exists");
+                throw new Exception("Username already exists");
             }
 
-            var passwordHash = BCrypt.HashPassword(password);
-
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
             var user = new User
             {

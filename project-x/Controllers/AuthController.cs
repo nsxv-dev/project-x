@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using project_x.Data;
 using project_x.DTOs;
-using project_x.Models;
 using project_x.Services;
 
 namespace project_x.Controllers
@@ -18,7 +16,7 @@ namespace project_x.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
+        public async Task<IActionResult> Register(RegisterUserDto registerUserDto)
         {
 
             if (string.IsNullOrEmpty(registerUserDto.Username) || string.IsNullOrEmpty(registerUserDto.Password))
