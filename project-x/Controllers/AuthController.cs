@@ -40,11 +40,18 @@ namespace project_x.Controllers
             return Ok(token);
         }
 
-        [HttpGet("test")]
+        [HttpGet("auth-test")]
         [Authorize]
         public IActionResult Test()
         {
             return Ok("Authenticated access successful");
+        }
+
+        [HttpGet("role-test")]
+        [Authorize(Roles = "admin")]
+        public IActionResult RoleTest()
+        {
+            return Ok("Role test access successful");
         }
     }
 }

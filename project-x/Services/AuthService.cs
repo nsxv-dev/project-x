@@ -68,7 +68,8 @@ namespace project_x.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),  // Store user ID
                 new Claim(ClaimTypes.Name, user.Username),  // Store username
-                new Claim(ClaimTypes.Email, user.Email)  // Store email
+                new Claim(ClaimTypes.Email, user.Email),  // Store email
+                new Claim(ClaimTypes.Role, user.Role)  // Store user role
             };
 
 
