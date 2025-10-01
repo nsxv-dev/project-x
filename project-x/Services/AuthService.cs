@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using project_x.Data;
+using project_x.DTOs;
 using project_x.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,7 +9,7 @@ using System.Text;
 namespace project_x.Services
 
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
@@ -19,44 +20,49 @@ namespace project_x.Services
             _configuration = configuration;
         }
 
-        public async Task RegisterUserAsync(string username, string password, string email)
+        public async Task<User?> RegisterUserAsync(RegisterUserDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == username))
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
             {
-                throw new Exception("Username already exists");
+                throw new Exception("Address e-mail already used");
             }
 
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             var user = new User
             {
-                Email = email,
-                Username = username,
+                Email = dto.Email,
+                Username = dto.Username,
                 PasswordHash = passwordHash
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<User?> ValidateUserCredentialsAsync(string email, string password)
-        {
-            // Find the user by email
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null)
-            {
-                return null;
-            }
-            // Verify the password
-            if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-            {
-                return null;
-            }
 
             return user;
         }
 
-        public async Task<string> GenerateJwtTokenAsync(User user)
+        public async Task<string?> LoginUserAsync(LoginUserDto dto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            // Check if user exists
+            if (user is null)
+            {
+                return null;
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            {
+                return null;
+            }
+
+            // Generate JWT token
+            var token = GenerateJwtTokenAsync(user);
+
+            return token;
+        }
+
+        public string GenerateJwtTokenAsync(User user)
         {
             var claims = new List<Claim>
             {
