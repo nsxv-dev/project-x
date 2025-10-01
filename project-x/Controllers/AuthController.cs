@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using project_x.DTOs;
 using project_x.Services;
 
@@ -37,6 +38,13 @@ namespace project_x.Controllers
             }
 
             return Ok(token);
+        }
+
+        [HttpGet("test")]
+        [Authorize]
+        public IActionResult Test()
+        {
+            return Ok("Authenticated access successful");
         }
     }
 }

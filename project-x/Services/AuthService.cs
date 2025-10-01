@@ -79,6 +79,8 @@ namespace project_x.Services
             var expiration = DateTime.UtcNow.AddHours(2);  // Token expiration time
 
             var jwtToken = new JwtSecurityToken(
+                issuer: _configuration["JwtSettings:Issuer"],
+                audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
                 expires: expiration,
                 signingCredentials: signingCredentials
