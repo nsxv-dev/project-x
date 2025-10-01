@@ -17,9 +17,9 @@ namespace project_x.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterUserDto registerUserDto)
+        public async Task<IActionResult> Register(AuthUserDto dto)
         {
-            var user = await _authService.RegisterUserAsync(registerUserDto);
+            var user = await _authService.RegisterUserAsync(dto);
             if (user == null)
             {
                 return BadRequest("Registration failed");
@@ -29,9 +29,9 @@ namespace project_x.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginUserDto loginUserDto)
+        public async Task<IActionResult> Login(AuthUserDto dto)
         {
-            var token = await _authService.LoginUserAsync(loginUserDto);
+            var token = await _authService.LoginUserAsync(dto);
             if (token == null)
             {
                 return BadRequest("Invalid credentials");

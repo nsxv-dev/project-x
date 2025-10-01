@@ -20,11 +20,11 @@ namespace project_x.Services
             _configuration = configuration;
         }
 
-        public async Task<User?> RegisterUserAsync(RegisterUserDto dto)
+        public async Task<User?> RegisterUserAsync(AuthUserDto dto)
         {
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
             {
-                throw new Exception("Address e-mail already used");
+                return null; // User with the same email already exists
             }
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
@@ -32,7 +32,6 @@ namespace project_x.Services
             var user = new User
             {
                 Email = dto.Email,
-                Username = dto.Username,
                 PasswordHash = passwordHash
             };
 
@@ -42,7 +41,7 @@ namespace project_x.Services
             return user;
         }
 
-        public async Task<string?> LoginUserAsync(LoginUserDto dto)
+        public async Task<string?> LoginUserAsync(AuthUserDto dto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
             // Check if user exists
@@ -67,7 +66,6 @@ namespace project_x.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),  // Store user ID
-                new Claim(ClaimTypes.Name, user.Username),  // Store username
                 new Claim(ClaimTypes.Email, user.Email),  // Store email
                 new Claim(ClaimTypes.Role, user.Role)  // Store user role
             };

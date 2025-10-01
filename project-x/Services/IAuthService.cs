@@ -5,7 +5,7 @@ namespace project_x.Services
 {
     public interface IAuthService
     {
-        Task<User?> RegisterUserAsync(RegisterUserDto dto);
-        Task<string?> LoginUserAsync(LoginUserDto dto);
+        Task<User?> RegisterUserAsync(AuthUserDto dto);
+        Task<string?> LoginUserAsync(AuthUserDto dto);
     }
 }
