@@ -8,9 +8,9 @@ namespace project_x.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
 
-        public AuthController(AuthService authService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
@@ -18,49 +18,25 @@ namespace project_x.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserDto registerUserDto)
         {
-            // Basic validation
-            if (string.IsNullOrEmpty(registerUserDto.Username) || string.IsNullOrEmpty(registerUserDto.Password))
+            var user = await _authService.RegisterUserAsync(registerUserDto);
+            if (user == null)
             {
-                return BadRequest("Username and password are required");
+                return BadRequest("Registration failed");
             }
 
-            try
-            {
-                await _authService.RegisterUserAsync(registerUserDto.Username, registerUserDto.Password, registerUserDto.Email);
-                return Ok($"User {registerUserDto.Username} has been registered successfully");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(user);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUserDto loginUserDto)
         {
-            // Check if email and password are provided
-            if (string.IsNullOrEmpty(loginUserDto.Email) || string.IsNullOrEmpty(loginUserDto.Password))
+            var token = await _authService.LoginUserAsync(loginUserDto);
+            if (token == null)
             {
-                return BadRequest("E-mail and password are required");
+                return BadRequest("Invalid credentials");
             }
-            try
-            {
-                // Validate user credentials
-                var user = await _authService.ValidateUserCredentialsAsync(loginUserDto.Email, loginUserDto.Password);
-                if (user == null)
-                {
-                    return Unauthorized("Invalid email or password");
-                }
 
-                // Generate JWT token
-                var token = await _authService.GenerateJwtTokenAsync(user);
-
-                return Ok(new { Token = token });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(token);
         }
     }
 }

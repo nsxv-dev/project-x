@@ -23,7 +23,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         });
 
 // Add services to the container.
-builder.Services.AddScoped<AuthService, AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
