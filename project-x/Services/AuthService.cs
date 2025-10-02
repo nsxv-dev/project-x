@@ -32,6 +32,7 @@ namespace project_x.Services
             var user = new User
             {
                 Email = dto.Email,
+                Role = "user", // Default role
                 PasswordHash = passwordHash
             };
 
@@ -61,7 +62,7 @@ namespace project_x.Services
             return token;
         }
 
-        public string GenerateJwtTokenAsync(User user)
+        private string GenerateJwtTokenAsync(User user)
         {
             var claims = new List<Claim>
             {
